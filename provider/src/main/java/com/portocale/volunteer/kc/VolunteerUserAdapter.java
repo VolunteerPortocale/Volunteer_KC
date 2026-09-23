@@ -1,5 +1,6 @@
 package com.portocale.volunteer.kc;
 
+import org.keycloak.models.UserModel;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
@@ -85,6 +86,15 @@ public class VolunteerUserAdapter extends AbstractUserAdapter {
 
     @Override
     public Stream<String> getAttributeStream(String name) {
+        if (UserModel.USERNAME.equals(name) || UserModel.EMAIL.equals(name)) {
+            return user.email == null ? Stream.empty() : Stream.of(user.email);
+        }
+        if (UserModel.FIRST_NAME.equals(name)) {
+            return user.firstName == null ? Stream.empty() : Stream.of(user.firstName);
+        }
+        if (UserModel.LAST_NAME.equals(name)) {
+            return user.lastName == null ? Stream.empty() : Stream.of(user.lastName);
+        }
         return Stream.empty();
     }
 }
