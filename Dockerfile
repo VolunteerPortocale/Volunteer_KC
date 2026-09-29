@@ -9,6 +9,7 @@ FROM quay.io/keycloak/keycloak:26.7.3 AS builder
 ENV KC_DB=postgres
 ENV KC_HEALTH_ENABLED=true
 COPY --from=provider-build /provider/build/libs/volunteer-user-provider.jar /opt/keycloak/providers/
+COPY themes/ /opt/keycloak/themes/
 RUN /opt/keycloak/bin/kc.sh build
 
 # Stage 3: runtime

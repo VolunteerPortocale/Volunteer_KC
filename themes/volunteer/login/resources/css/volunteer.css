@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Site tokens (from Volunteer_FE styles.scss) */
+:root {
+    --vol-primary: #2b4c3f;
+    --vol-primary-hover: #1f3a2e;
+    --vol-primary-soft: #e9efeb;
+    --vol-text: #3a3a3a;
+    --vol-muted: #757575;
+    --vol-bg: #f4f5f4;
+    --vol-white: #ffffff;
+    --vol-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Map them onto PatternFly 5 (used by the default Keycloak theme) */
+    --pf-v5-global--primary-color--100: var(--vol-primary);
+    --pf-v5-global--primary-color--200: var(--vol-primary-hover);
+    --pf-v5-global--link--Color: var(--vol-primary);
+    --pf-v5-global--link--Color--hover: var(--vol-primary-hover);
+    --pf-v5-global--FontFamily--text: var(--vol-font);
+    --pf-v5-global--FontFamily--heading: var(--vol-font);
+    --pf-v5-global--Color--100: var(--vol-text);
+}
+
+/* Page background: plain light grey instead of the dark pattern */
+html.login-pf,
+html.login-pf body,
+.pf-v5-c-login {
+    background: var(--vol-bg) !important;
+    font-family: var(--vol-font);
+    color: var(--vol-text);
+}
+
+/* Realm name above the card */
+#kc-header-wrapper,
+.pf-v5-c-login__header {
+    color: var(--vol-primary);
+    font-weight: 700;
+}
+
+/* Login card */
+.pf-v5-c-login__main {
+    background: var(--vol-white);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.pf-v5-c-login__main-header .pf-v5-c-title {
+    color: var(--vol-text);
+    font-weight: 700;
+}
+
+/* Sign In button: site primary button */
+.pf-v5-c-button.pf-m-primary {
+    --pf-v5-c-button--BorderRadius: 50px;
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--vol-primary);
+    --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--vol-primary-hover);
+    --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--vol-primary-hover);
+    --pf-v5-c-button--m-primary--active--BackgroundColor: var(--vol-primary-hover);
+    min-height: 48px;
+    font-weight: 600;
+}
+
+/* Input underline in site green on hover and focus */
+.pf-v5-c-form-control {
+    --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--vol-primary);
+    --pf-v5-c-form-control--focus--after--BorderBottomColor: var(--vol-primary);
+}
+/* Card top bar: site green instead of Keycloak blue */
+.pf-v5-c-login__main,
+.card-pf {
+    border-top: 4px solid var(--vol-primary) !important;
+}
+
+/* Realm title above the card: visible, in site green */
+#kc-header,
+#kc-header-wrapper,
+#kc-header-wrapper * {
+    color: var(--vol-primary) !important;
+}
+/* Remove the header's own blue bar; the card already has the green one */
+.pf-v5-c-login__main-header {
+    border-top: none !important;
+}
