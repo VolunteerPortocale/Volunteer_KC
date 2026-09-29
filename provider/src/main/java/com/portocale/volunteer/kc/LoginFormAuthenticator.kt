@@ -1,29 +1,33 @@
 package com.portocale.volunteer.kc
 
+import com.webauthn4j.data.client.challenge.Challenge
 import org.keycloak.services.messages.Messages
 import org.keycloak.authentication.AuthenticationFlowContext
 import org.keycloak.authentication.AuthenticationFlowError
 import org.keycloak.authentication.Authenticator
 import org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAuthenticator
+import org.keycloak.forms.login.LoginFormsProvider
 import org.keycloak.models.KeycloakSession
 import org.keycloak.models.RealmModel
 import org.keycloak.models.UserModel
-import org.keycloak.models.utils.KeycloakModelUtils
+import jakarta.ws.rs.core.Response
+
+private const val LOGIN_FORM_TPL = "volunteer_login.ftl"
 
 class LoginFormAuthenticator : AbstractUsernameFormAuthenticator(), Authenticator {
+
     override fun authenticate(context: AuthenticationFlowContext) {
-        context.challenge(context.form().createLoginUsernamePassword())
+        context.challenge(createLoginForm(context.form()))
     }
+
+    /** Used by the base class for every login and error page. */
+    override fun createLoginForm(form: LoginFormsProvider): Response =
+        form.createForm(LOGIN_FORM_TPL)
+
 
     override fun action(context: AuthenticationFlowContext) {
         val formData = context.httpRequest.decodedFormParameters
         if (!validateUserAndPassword(context, formData)) {
-            context.failureChallenge(
-                AuthenticationFlowError.INVALID_CREDENTIALS,
-                context.form()
-                    .setError(Messages.INVALID_USER)
-                    .createLoginUsernamePassword()
-            )
             return
         }
         context.success()
