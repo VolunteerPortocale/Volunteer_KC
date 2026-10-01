@@ -1,11 +1,13 @@
 package com.portocale.volunteer.kc.authenticator
 
 import org.keycloak.authentication.AuthenticationFlowContext
+import org.keycloak.authentication.AuthenticationFlowError
 import org.keycloak.authentication.Authenticator
 import org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAuthenticator
 import org.keycloak.models.KeycloakSession
 import org.keycloak.models.RealmModel
 import org.keycloak.models.UserModel
+import org.keycloak.models.utils.FormMessage
 
 private const val LOGIN_FORM_TPL = "volunteer_login.ftl"
 
@@ -17,10 +19,14 @@ class LoginFormAuthenticator : AbstractUsernameFormAuthenticator(), Authenticato
 
   override fun action(context: AuthenticationFlowContext) {
     val formData = context.httpRequest.decodedFormParameters
+    val username = formData.getFirst("username")
     if (!validateUserAndPassword(context, formData)) {
       context.failureChallenge(
-        ,
-        context.form().createForm(LOGIN_FORM_TPL)
+        AuthenticationFlowError.INVALID_CREDENTIALS,
+        context.form()
+          .setAttribute("username", username)
+          .addError(FormMessage("volInvalidCredentials"))
+          .createForm(LOGIN_FORM_TPL)
       )
       return
     }

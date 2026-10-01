@@ -29,7 +29,7 @@
 
                     <div class="vol-input">
                         <input name="username" id="username" placeholder="" required autocomplete="off"
-                               type="text" class="vol-input">
+                               type="text" class="vol-input" value="${username!''}">
                         <label class="vol-label" for="username">${msg("volUsernameLabel")}</label>
                     </div>
                 </div>
