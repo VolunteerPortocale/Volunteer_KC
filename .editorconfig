@@ -1,0 +1,7 @@
+[*.{kt,kts}]
+# possible values: number (e.g. 2), "unset" (makes ktlint ignore indentation completely)
+indent_size=2
+# true (recommended) / false
+insert_final_newline=true
+# rules disable
+disabled_rules=no-wildcard-imports, import-ordering
