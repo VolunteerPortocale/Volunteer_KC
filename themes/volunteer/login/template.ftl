@@ -33,11 +33,33 @@
     <div class="vol-form-wrapper">
         <#--Placeholder for the nested form-->
         <div class="vol-header">
-            <figure class="vol-logo">
-                <img src="${url.resourcesPath}/assets/vol_logo_header.ico"/>
-            </figure>
-        </div>
+            <img class="vol-logo"
+                 src="${url.resourcesPath}/assets/vol_logo_header.ico"
+                 alt="VOLUNTEERIO"/>
+            <span class="vol-logo-text">VOLUNTEERIO</span>
 
+            <#if realm.internationalizationEnabled  && locale.supported?size gt 1>
+                <div tabindex="-1" id="langSelect" class="vol-dropdown">
+                    <div class="vol-dropdown-value">
+                        <span>${locale.currentLanguageTag?upper_case}</span>
+                        <span class="vol-dropdown-icon-status"></span>
+                    </div>
+                    <div class="vol-dropdown-options">
+                        <#list locale.supported as l>
+                            <#if l?size gt 1>
+                                <a href="${l.url}"
+                                   class="vol-dropdown-option <#if locale.currentLanguageTag == l.languageTag>vol-dropdown-option-active</#if>">
+                                    ${msg("volLocale_" + l.languageTag)}
+                                    (${l.languageTag?upper_case})
+                                    <span class="vol-dropdown-option-check"></span>
+                                </a>
+                            </#if>
+                        </#list>
+                    </div>
+                </div>
+            </#if>
+
+        </div>
         <div class="vol-content vol-column">
             <div class="vol-form">
                 <#nested "form">

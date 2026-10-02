@@ -1,5 +1,6 @@
 package com.portocale.volunteer.kc.repository
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.portocale.volunteer.kc.LoginRequest
@@ -146,14 +147,33 @@ class BackendRepository(
       null
     }
 
-  private companion object {
+  companion object {
     private val log =
       Logger.getLogger(BackendRepository::class.java)
 
     private val MAPPER: ObjectMapper =
       jacksonObjectMapper()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
 
     private val JSON =
       "application/json; charset=utf-8".toMediaType()
+
+    private val backendRepository: BackendRepository by lazy {
+      BackendRepository(
+        baseUrl = System.getenv(CONFIG_BASE_URL)
+          ?: error("$CONFIG_BASE_URL is not set"),
+        username = System.getenv(CONFIG_USERNAME)
+          ?: error("$CONFIG_USERNAME is not set"),
+        password = System.getenv(CONFIG_PASSWORD)
+          ?: error("$CONFIG_PASSWORD is not set")
+      )
+    }
+
+    fun getInstance(): BackendRepository = backendRepository
+
+    private val CONFIG_BASE_URL = "KC_BACKEND_URL"
+    private val CONFIG_USERNAME = "KC_BACKEND_USER"
+    private val CONFIG_PASSWORD = "KC_BACKEND_PASSWORD"
   }
 }

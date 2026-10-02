@@ -1,43 +1,49 @@
 package com.portocale.volunteer.kc
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.Instant
 import java.util.stream.Stream
 import org.keycloak.component.ComponentModel
 import org.keycloak.models.KeycloakSession
 import org.keycloak.models.RealmModel
-import org.keycloak.models.RoleModel
 import org.keycloak.models.SubjectCredentialManager
 import org.keycloak.storage.StorageId
 import org.keycloak.storage.adapter.AbstractUserAdapter
 
 data class LoginRequest(
-    val email: String,
-    val password: String,
+  val email: String,
+  val password: String,
 )
 
 /** What the BE returns from /api/v1/users. Only the fields Keycloak needs. */
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class VolunteerUser(
-    var id: String? = null,
-    var firstName: String? = null,
-    var lastName: String? = null,
-    var email: String? = null,
-    var role: String? = null,
-    var status: String? = null,
-    var suspendedUntil: String? = null,
+  val id: String,
+  val firstName: String,
+  val lastName: String,
+  val email: String,
+  val role: String,
+  val status: UserStatus,
+  val suspendedUntil: Instant? = null,
+  val locale: String = "en",
+  val forceResetPassword: Boolean = false
 ) {
-    /**
-     * INACTIVE means the registration OTP was never confirmed.
-     * SUSPENDED blocks login until suspendedUntil has passed.
-     */
-    fun isLoginAllowed(): Boolean = when (status) {
-        "ACTIVE" -> true
-        "SUSPENDED" -> suspendedUntil?.let {
-            runCatching { Instant.parse(it).isBefore(Instant.now()) }.getOrDefault(false)
-        } ?: false
-        else -> false
-    }
+
+  /**
+   * INACTIVE means the registration OTP was never confirmed.
+   * SUSPENDED blocks login until suspendedUntil has passed.
+   */
+  fun isLoginAllowed(): Boolean = when (status) {
+    UserStatus.ACTIVE -> true
+    UserStatus.INACTIVE -> false
+    UserStatus.SUSPENDED -> suspendedUntil?.let {
+      runCatching { it.isBefore(Instant.now()) }.getOrDefault(false)
+    } ?: false
+  }
+}
+
+enum class UserStatus {
+  ACTIVE,
+  INACTIVE,
+  SUSPENDED,
 }
 
 
@@ -46,57 +52,50 @@ data class VolunteerUser(
  * Read-only: users are managed in the app, not here.
  */
 class VolunteerUserAdapter(
-    session: KeycloakSession,
-    realm: RealmModel,
-    model: ComponentModel,
-    private val user: VolunteerUser,
+  session: KeycloakSession,
+  realm: RealmModel,
+  model: ComponentModel,
+  private val user: VolunteerUser,
 ) : AbstractUserAdapter(session, realm, model) {
+  companion object {
+    const val ROLE_ATTRIBUTE = "role"
+    const val FORCE_RESET_PASSWORD = "forceResetPassword"
+  }
 
-    init {
-        storageId = StorageId(model.id, user.id)
-    }
+  init {
+    storageId = StorageId(model.id, user.id)
+  }
 
-    override fun getUsername(): String? = user.email
+  private val userAttributes = mapOf(
+    USERNAME to listOf(user.email),
+    EMAIL to listOf(user.email),
+    FIRST_NAME to listOf(user.firstName),
+    LAST_NAME to listOf(user.lastName),
+    ROLE_ATTRIBUTE to listOf(user.role),
+    LOCALE to listOf(user.locale),
+    FORCE_RESET_PASSWORD to listOf(user.forceResetPassword.toString()),
+  )
 
-    override fun getEmail(): String? = user.email
+  override fun getUsername(): String = user.email
 
-    override fun getFirstName(): String? = user.firstName
+  override fun getEmail(): String = user.email
 
-    override fun getLastName(): String? = user.lastName
+  override fun getFirstName(): String = user.firstName
 
-    override fun isEmailVerified(): Boolean = user.status != "INACTIVE"
+  override fun getLastName(): String = user.lastName
 
-    /** Disabled users cannot log in: this is how INACTIVE and SUSPENDED are enforced. */
-    override fun isEnabled(): Boolean = user.isLoginAllowed()
+  override fun isEmailVerified(): Boolean = user.status != UserStatus.INACTIVE
 
-    /** Maps the single BE role onto a realm role of the same name, if it exists. */
-    override fun getRoleMappingsInternal(): Set<RoleModel> {
-        val roleName = user.role ?: return emptySet()
-        val role = realm.getRole(roleName) ?: return emptySet()
-        return setOf(role)
-    }
+  /** Disabled users cannot log in: this is how INACTIVE and SUSPENDED are enforced. */
+  override fun isEnabled(): Boolean = user.isLoginAllowed()
 
-    /** No credentials are stored in Keycloak: the backend validates passwords. */
-    override fun credentialManager(): SubjectCredentialManager =
-        session.users().getUserCredentialManager(this)
+  /** No credentials are stored in Keycloak: the backend validates passwords. */
+  override fun credentialManager(): SubjectCredentialManager =
+    session.users().getUserCredentialManager(this)
 
-    override fun getAttributeStream(name: String): Stream<String> = when (name) {
-        USERNAME, EMAIL -> user.email.asStream()
-        FIRST_NAME -> user.firstName.asStream()
-        LAST_NAME -> user.lastName.asStream()
-        else -> Stream.empty()
-    }
-    override fun getAttributes(): Map<String, List<String>> = buildMap {
-        user.email?.let {
-            put(USERNAME, listOf(it))
-            put(EMAIL, listOf(it))
-        }
-        user.firstName?.let { put(FIRST_NAME, listOf(it)) }
-        user.lastName?.let { put(LAST_NAME, listOf(it)) }
-    }
-    override fun getFirstAttribute(name: String): String? =
-        getAttributeStream(name).findFirst().orElse(null)
+  override fun getAttributeStream(name: String): Stream<String> =
+    userAttributes[name]?.stream() ?: Stream.empty()
 
-    private fun String?.asStream(): Stream<String> =
-        if (this == null) Stream.empty() else Stream.of(this)
+  override fun getAttributes(): Map<String, List<String>> =
+    userAttributes
 }

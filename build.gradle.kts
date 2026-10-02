@@ -36,11 +36,6 @@ tasks.jar {
 tasks.shadowJar {
   archiveFileName = "volunteer-user-provider.jar"
 
-  relocate(
-    "kotlin",
-    "com.portocale.volunteer.kc.shaded.kotlin"
-  )
-
   mergeServiceFiles()
 }
 

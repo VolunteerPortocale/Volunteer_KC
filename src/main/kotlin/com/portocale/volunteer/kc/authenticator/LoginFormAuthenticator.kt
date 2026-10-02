@@ -7,7 +7,7 @@ import org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAu
 import org.keycloak.models.KeycloakSession
 import org.keycloak.models.RealmModel
 import org.keycloak.models.UserModel
-import org.keycloak.models.utils.FormMessage
+import org.keycloak.models.utils.KeycloakModelUtils
 
 private const val LOGIN_FORM_TPL = "volunteer_login.ftl"
 
@@ -25,11 +25,12 @@ class LoginFormAuthenticator : AbstractUsernameFormAuthenticator(), Authenticato
         AuthenticationFlowError.INVALID_CREDENTIALS,
         context.form()
           .setAttribute("username", username)
-          .addError(FormMessage("volInvalidCredentials"))
           .createForm(LOGIN_FORM_TPL)
       )
       return
     }
+    context.clearUser()
+    context.user = KeycloakModelUtils.findUserByNameOrEmail(context.session, context.realm, username)
     context.success()
   }
 
