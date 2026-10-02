@@ -1,5 +1,6 @@
 package com.portocale.volunteer.kc.authenticator
 
+import com.portocale.volunteer.kc.UpdatePasswordRequest
 import com.portocale.volunteer.kc.VolunteerUserAdapter.Companion.FORCE_RESET_PASSWORD
 import com.portocale.volunteer.kc.repository.BackendRepository
 import org.keycloak.authentication.AuthenticationFlowContext
@@ -8,6 +9,7 @@ import org.keycloak.models.KeycloakSession
 import org.keycloak.models.RealmModel
 import org.keycloak.models.UserModel
 import org.keycloak.models.utils.FormMessage
+import org.keycloak.storage.StorageId
 
 private const val RESET_CREDENTIALS_FORM_TPL = "reset_credentials.ftl"
 
@@ -17,8 +19,11 @@ class ResetCredentialsAuthenticator(
 
   override fun authenticate(context: AuthenticationFlowContext) {
     val user = context.user
-    if (user.getFirstAttribute(FORCE_RESET_PASSWORD).toBoolean()) {
+    val forceResetPassword = user.getFirstAttribute(FORCE_RESET_PASSWORD).toBoolean()
+
+    if (forceResetPassword) {
       context.challenge(context.form().createForm(RESET_CREDENTIALS_FORM_TPL))
+      return
     }
     context.success()
   }
@@ -36,6 +41,7 @@ class ResetCredentialsAuthenticator(
           .addError(FormMessage("volMissingInput"))
           .createForm(RESET_CREDENTIALS_FORM_TPL)
       )
+      return
     }
     if (oldPassword == newPassword || oldPassword == confirmPassword) {
       context.challenge(
@@ -43,6 +49,7 @@ class ResetCredentialsAuthenticator(
           .addError(FormMessage("volPasswordDuplicate"))
           .createForm(RESET_CREDENTIALS_FORM_TPL)
       )
+      return
     }
     if (newPassword != confirmPassword) {
       context.challenge(
@@ -50,9 +57,24 @@ class ResetCredentialsAuthenticator(
           .addError(FormMessage("volPasswordMismatch"))
           .createForm(RESET_CREDENTIALS_FORM_TPL)
       )
+      return
     }
-//    Here we need to call the reset password from the BE and in case of 200 return success,
-//    otherwise error based on the response 400 for the invalid creds and generic error in case of any other
+
+    if (!repository.updatePassword(
+        UpdatePasswordRequest(
+          userId = StorageId(user.id).externalId,
+          newPassword = newPassword,
+          currentPassword = oldPassword
+        )
+      )
+    ) {
+      context.challenge(
+        context.form()
+          .addError(FormMessage("volPasswordUpdateError"))
+          .createForm(RESET_CREDENTIALS_FORM_TPL)
+      )
+      return
+    }
     context.success()
   }
 

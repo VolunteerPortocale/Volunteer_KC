@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.portocale.volunteer.kc.LoginRequest
+import com.portocale.volunteer.kc.UpdatePasswordRequest
 import com.portocale.volunteer.kc.VolunteerUser
 import java.util.concurrent.TimeUnit
 import okhttp3.Credentials
@@ -74,6 +75,40 @@ class BackendRepository(
         .build()
 
     return executeUserRequest(request, "getUserById")
+  }
+
+  fun updatePassword(input: UpdatePasswordRequest): Boolean {
+    val body =
+      MAPPER.writeValueAsString(
+        input,
+      )
+    val request =
+      Request.Builder()
+        .url("$baseUrl/api/v1/users/password/update")
+        .post(
+          body.toRequestBody(JSON),
+        )
+        .build()
+
+    return try {
+      client.newCall(request).execute().use { response ->
+        when (response.code) {
+          200 -> true
+          400, 404 -> false
+
+          else -> {
+            log.warnf(
+              "login: unexpected status %d",
+              response.code,
+            )
+            false
+          }
+        }
+      }
+    } catch (e: Exception) {
+      log.error("login: backend call failed", e)
+      false
+    }
   }
 
   fun login(

@@ -14,6 +14,12 @@ data class LoginRequest(
   val password: String,
 )
 
+data class UpdatePasswordRequest(
+  val userId: String,
+  val currentPassword: String,
+  val newPassword: String
+)
+
 /** What the BE returns from /api/v1/users. Only the fields Keycloak needs. */
 data class VolunteerUser(
   val id: String,
@@ -98,4 +104,8 @@ class VolunteerUserAdapter(
 
   override fun getAttributes(): Map<String, List<String>> =
     userAttributes
+
+  override fun getFirstAttribute(name: String): String? {
+    return userAttributes[name]?.get(0)
+  }
 }
