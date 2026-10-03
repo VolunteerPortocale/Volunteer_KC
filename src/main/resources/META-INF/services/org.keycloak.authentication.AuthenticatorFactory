@@ -1,0 +1,2 @@
+com.portocale.volunteer.kc.authenticator.LoginFormAuthenticatorFactory
+com.portocale.volunteer.kc.authenticator.ResetCredentialsAuthenticatorFactory

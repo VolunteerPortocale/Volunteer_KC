@@ -1,4 +1,5 @@
-provider/build
-provider/.gradle
-provider/.kotlin
-provider/bin
+build
+.gradle
+.kotlin
+.idea
+provider

@@ -1,14 +1,16 @@
-# Stage 1: build the provider fat JAR with the project's own Gradle wrapper
+# Stage 1: build the provider fat JAR with the project's Gradle wrapper (project is in the repo root)
 FROM eclipse-temurin:21-jdk AS provider-build
-WORKDIR /provider
-COPY provider/ .
+WORKDIR /build
+COPY gradlew gradlew.bat settings.gradle.kts build.gradle.kts ./
+COPY gradle/ gradle/
+COPY src/ src/
 RUN chmod +x gradlew && ./gradlew shadowJar --no-daemon
 
-# Stage 2: Keycloak build with the provider installed
+# Stage 2: Keycloak build with the provider and theme installed
 FROM quay.io/keycloak/keycloak:26.7.3 AS builder
 ENV KC_DB=postgres
 ENV KC_HEALTH_ENABLED=true
-COPY --from=provider-build /provider/build/libs/volunteer-user-provider.jar /opt/keycloak/providers/
+COPY --from=provider-build /build/build/libs/volunteer-user-provider.jar /opt/keycloak/providers/
 COPY themes/ /opt/keycloak/themes/
 RUN /opt/keycloak/bin/kc.sh build
 
