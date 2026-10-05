@@ -20,6 +20,10 @@ data class UpdatePasswordRequest(
   val newPassword: String
 )
 
+data class ResetPasswordRequest(
+  val email: String
+)
+
 /** What the BE returns from /api/v1/users. Only the fields Keycloak needs. */
 data class VolunteerUser(
   val id: String,

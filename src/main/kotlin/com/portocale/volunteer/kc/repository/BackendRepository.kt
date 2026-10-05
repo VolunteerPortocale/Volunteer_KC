@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.portocale.volunteer.kc.LoginRequest
+import com.portocale.volunteer.kc.ResetPasswordRequest
 import com.portocale.volunteer.kc.UpdatePasswordRequest
 import com.portocale.volunteer.kc.VolunteerUser
 import java.util.concurrent.TimeUnit
@@ -90,25 +91,23 @@ class BackendRepository(
         )
         .build()
 
-    return try {
-      client.newCall(request).execute().use { response ->
-        when (response.code) {
-          200 -> true
-          400, 404 -> false
+    return executeOkCheckingRequest(request)
+  }
 
-          else -> {
-            log.warnf(
-              "login: unexpected status %d",
-              response.code,
-            )
-            false
-          }
-        }
-      }
-    } catch (e: Exception) {
-      log.error("login: backend call failed", e)
-      false
-    }
+  fun resetPassword(input: ResetPasswordRequest): Boolean {
+    val body =
+      MAPPER.writeValueAsString(
+        input,
+      )
+    val request =
+      Request.Builder()
+        .url("$baseUrl/api/v1/users/password/reset")
+        .post(
+          body.toRequestBody(JSON),
+        )
+        .build()
+
+    return executeOkCheckingRequest(request)
   }
 
   fun login(
@@ -131,25 +130,7 @@ class BackendRepository(
         )
         .build()
 
-    return try {
-      client.newCall(request).execute().use { response ->
-        when (response.code) {
-          200 -> true
-          400, 404 -> false
-
-          else -> {
-            log.warnf(
-              "login: unexpected status %d",
-              response.code,
-            )
-            false
-          }
-        }
-      }
-    } catch (e: Exception) {
-      log.error("login: backend call failed", e)
-      false
-    }
+    return executeOkCheckingRequest(request)
   }
 
   private fun executeUserRequest(
@@ -181,6 +162,26 @@ class BackendRepository(
       log.error("$operation: backend call failed", e)
       null
     }
+
+  private fun executeOkCheckingRequest(request: Request): Boolean = try {
+    client.newCall(request).execute().use { response ->
+      when (response.code) {
+        200 -> true
+        400, 404 -> false
+
+        else -> {
+          log.warnf(
+            "login: unexpected status %d",
+            response.code,
+          )
+          false
+        }
+      }
+    }
+  } catch (e: Exception) {
+    log.error("login: backend call failed", e)
+    false
+  }
 
   companion object {
     private val log =

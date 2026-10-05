@@ -1,5 +1,6 @@
 package com.portocale.volunteer.kc.authenticator
 
+import com.portocale.volunteer.kc.repository.CommonModels.Companion.FormAttributes
 import org.keycloak.authentication.AuthenticationFlowContext
 import org.keycloak.authentication.AuthenticationFlowError
 import org.keycloak.authentication.Authenticator
@@ -19,12 +20,15 @@ class LoginFormAuthenticator : AbstractUsernameFormAuthenticator(), Authenticato
 
   override fun action(context: AuthenticationFlowContext) {
     val formData = context.httpRequest.decodedFormParameters
-    val username = formData.getFirst("username")
+    val username = formData.getFirst(FormAttributes.USERNAME.value)
+
+    context.authenticationSession.setAuthNote(FormAttributes.USERNAME.value, username)
+
     if (!validateUserAndPassword(context, formData)) {
       context.failureChallenge(
         AuthenticationFlowError.INVALID_CREDENTIALS,
         context.form()
-          .setAttribute("username", username)
+          .setAttribute(FormAttributes.USERNAME.value, username)
           .createForm(LOGIN_FORM_TPL)
       )
       return
