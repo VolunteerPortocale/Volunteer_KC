@@ -3,6 +3,7 @@ package com.portocale.volunteer.kc.authenticator
 import com.portocale.volunteer.kc.UpdatePasswordRequest
 import com.portocale.volunteer.kc.VolunteerUserAdapter.Companion.FORCE_RESET_PASSWORD
 import com.portocale.volunteer.kc.repository.BackendRepository
+import com.portocale.volunteer.kc.repository.CommonModels.Companion.FormAttributes
 import org.keycloak.authentication.AuthenticationFlowContext
 import org.keycloak.authentication.Authenticator
 import org.keycloak.models.KeycloakSession
@@ -30,9 +31,9 @@ class ResetCredentialsAuthenticator(
 
   override fun action(context: AuthenticationFlowContext) {
     val formData = context.httpRequest.decodedFormParameters
-    val oldPassword = formData.getFirst("oldPassword")
-    val newPassword = formData.getFirst("newPassword")
-    val confirmPassword = formData.getFirst("confirmPassword")
+    val oldPassword = formData.getFirst(FormAttributes.OLD_PASSWORD.value)
+    val newPassword = formData.getFirst(FormAttributes.NEW_PASSWORD.value)
+    val confirmPassword = formData.getFirst(FormAttributes.CONFIRM_PASSWORD.value)
     val user = context.user
 
     if (oldPassword.isNullOrEmpty() || newPassword.isNullOrEmpty() || confirmPassword.isNullOrEmpty() || user == null) {
