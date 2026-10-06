@@ -27,11 +27,12 @@
                         <label for="password" class="vol-label">${msg("volPasswordLabel")}</label>
                     </div>
 
-                    <button type="button" id="vol-password-toggle" class="vol-password-toggle"
+                    <button type="button" class="vol-password-toggle"
                             aria-controls="password" aria-pressed="false"
                             aria-label="${msg("showPassword")}"
                             data-label-show="${msg("showPassword")}"
-                            data-label-hide="${msg("hidePassword")}">
+                            data-label-hide="${msg("hidePassword")}"
+                            onclick="togglePasswordVisibility(this, 'password')">
                         <img class="vol-icon-show" src="${url.resourcesPath}/assets/visibility.svg" alt=""/>
                         <img class="vol-icon-hide" src="${url.resourcesPath}/assets/visibility_off.svg" alt=""/>
                     </button>
