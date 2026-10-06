@@ -40,3 +40,16 @@ function handleInputs() {
         inp.addEventListener('input', removeServerErrors);
     });
 }
+function togglePasswordVisibility(button, inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    button.setAttribute("aria-pressed", String(show));
+    button.setAttribute("aria-label", show ? button.dataset.labelHide : button.dataset.labelShow);
+    input.focus();
+}
+
+window.togglePasswordVisibility = togglePasswordVisibility;
+

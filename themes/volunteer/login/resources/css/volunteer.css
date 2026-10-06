@@ -420,3 +420,32 @@ body {
 /*----------END LOGIN----------*/
 /*----------RESET PASSWORD----------*/
 /*----------END RESET PASSWORD----------*/
+/* Show/hide password button at the right end of the password field */
+.vol-field-content .vol-input {
+  flex: 1;
+}
+
+.vol-password-toggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 4px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.vol-password-toggle img {
+  width: 20px;
+  height: 20px;
+}
+
+.vol-password-toggle .vol-icon-hide { display: none; }
+.vol-password-toggle[aria-pressed="true"] .vol-icon-show { display: none; }
+.vol-password-toggle[aria-pressed="true"] .vol-icon-hide { display: block; }
+
+.vol-password-toggle:focus-visible {
+  outline: 2px solid #2b4c3f;
+  border-radius: 4px;
+}

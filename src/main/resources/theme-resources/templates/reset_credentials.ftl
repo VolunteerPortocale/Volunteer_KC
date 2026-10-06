@@ -12,6 +12,16 @@
                                type="password" class="vol-input">
                         <label class="vol-label" for="oldPassword">${msg("volOldPasswordLabel")}</label>
                     </div>
+
+                    <button type="button" class="vol-password-toggle"
+                            aria-controls="oldPassword" aria-pressed="false"
+                            aria-label="${msg("showPassword")}"
+                            data-label-show="${msg("showPassword")}"
+                            data-label-hide="${msg("hidePassword")}"
+                            onclick="togglePasswordVisibility(this, 'oldPassword')">
+                        <img class="vol-icon-show" src="${url.resourcesPath}/assets/visibility.svg" alt=""/>
+                        <img class="vol-icon-hide" src="${url.resourcesPath}/assets/visibility_off.svg" alt=""/>
+                    </button>
                 </div>
             </div>
 
@@ -22,6 +32,16 @@
                                type="password" class="vol-input">
                         <label for="newPassword" class="vol-label">${msg("volNewPasswordLabel")}</label>
                     </div>
+
+                    <button type="button" class="vol-password-toggle"
+                            aria-controls="newPassword" aria-pressed="false"
+                            aria-label="${msg("showPassword")}"
+                            data-label-show="${msg("showPassword")}"
+                            data-label-hide="${msg("hidePassword")}"
+                            onclick="togglePasswordVisibility(this, 'newPassword')">
+                        <img class="vol-icon-show" src="${url.resourcesPath}/assets/visibility.svg" alt=""/>
+                        <img class="vol-icon-hide" src="${url.resourcesPath}/assets/visibility_off.svg" alt=""/>
+                    </button>
                 </div>
             </div>
 
@@ -32,8 +52,17 @@
                                type="password" class="vol-input">
                         <label for="confirmPassword" class="vol-label">${msg("volConfirmPasswordLabel")}</label>
                     </div>
-                </div>
 
+                    <button type="button" class="vol-password-toggle"
+                            aria-controls="confirmPassword" aria-pressed="false"
+                            aria-label="${msg("showPassword")}"
+                            data-label-show="${msg("showPassword")}"
+                            data-label-hide="${msg("hidePassword")}"
+                            onclick="togglePasswordVisibility(this, 'confirmPassword')">
+                        <img class="vol-icon-show" src="${url.resourcesPath}/assets/visibility.svg" alt=""/>
+                        <img class="vol-icon-hide" src="${url.resourcesPath}/assets/visibility_off.svg" alt=""/>
+                    </button>
+                </div>
             </div>
 
             <#if message?has_content && message.type = 'error'>
@@ -51,4 +80,4 @@
         </div>
     </form>
     <script async src="${url.resourcesPath}/js/index.js" type="text/javascript"></script>
-</@layout.registrationLayout>\
+</@layout.registrationLayout>
