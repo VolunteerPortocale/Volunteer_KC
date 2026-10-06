@@ -26,17 +26,26 @@
                                type="password" class="vol-input">
                         <label for="password" class="vol-label">${msg("volPasswordLabel")}</label>
                     </div>
+
+                    <button type="button" id="vol-password-toggle" class="vol-password-toggle"
+                            aria-controls="password" aria-pressed="false"
+                            aria-label="${msg("showPassword")}"
+                            data-label-show="${msg("showPassword")}"
+                            data-label-hide="${msg("hidePassword")}">
+                        <img class="vol-icon-show" src="${url.resourcesPath}/assets/visibility.svg" alt=""/>
+                        <img class="vol-icon-hide" src="${url.resourcesPath}/assets/visibility_off.svg" alt=""/>
+                    </button>
                 </div>
 
                 <#if message?has_content && message.type = 'error'>
-                    <div class="vol-field-errors">
-                        <span id="userNameError" class="vol-field-error">
-                            <img src="${url.resourcesPath}/assets/warning_outline.svg"/>
-                            ${message.summary}
-                        </span>
-                    </div>
-                </#if>
-            </div>
+                        <div class="vol-field-errors">
+                            <span id="userNameError" class="vol-field-error">
+                                <img src="${url.resourcesPath}/assets/warning_outline.svg"/>
+                                ${message.summary}
+                            </span>
+                        </div>
+                    </#if>
+                </div>
         </div>
 
         <div class="vol-column">
@@ -49,4 +58,4 @@
         </div>
     </form>
     <script async src="${url.resourcesPath}/js/index.js" type="text/javascript"></script>
-</@layout.registrationLayout>\
+</@layout.registrationLayout>

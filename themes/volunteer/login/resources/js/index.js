@@ -40,3 +40,22 @@ function handleInputs() {
         inp.addEventListener('input', removeServerErrors);
     });
 }
+function initPasswordToggle() {
+  const toggle = document.getElementById("vol-password-toggle");
+  const input = document.getElementById("password");
+  if (!toggle || !input) return;
+
+  toggle.addEventListener("click", () => {
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    toggle.setAttribute("aria-pressed", String(show));
+    toggle.setAttribute("aria-label", show ? toggle.dataset.labelHide : toggle.dataset.labelShow);
+    input.focus();
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initPasswordToggle);
+} else {
+  initPasswordToggle();
+}
