@@ -49,4 +49,4 @@
         </div>
     </form>
     <script async src="${url.resourcesPath}/js/index.js" type="text/javascript"></script>
-</@layout.registrationLayout>\
+</@layout.registrationLayout>
