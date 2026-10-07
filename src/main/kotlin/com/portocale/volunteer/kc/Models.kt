@@ -20,6 +20,10 @@ data class UpdatePasswordRequest(
   val newPassword: String
 )
 
+data class ValidateOtpRequest(
+  val otp: String
+)
+
 data class ResetPasswordRequest(
   val email: String
 )
@@ -34,7 +38,8 @@ data class VolunteerUser(
   val status: UserStatus,
   val suspendedUntil: Instant? = null,
   val locale: String = "en",
-  val forceResetPassword: Boolean = false
+  val forceResetPassword: Boolean = false,
+  val twoFactorEnabled: Boolean = false
 ) {
 
   /**
@@ -70,6 +75,7 @@ class VolunteerUserAdapter(
   companion object {
     const val ROLE_ATTRIBUTE = "role"
     const val FORCE_RESET_PASSWORD = "forceResetPassword"
+    const val TWO_FACTORY_ENABLED = "twoFactorEnabled"
   }
 
   init {
@@ -84,6 +90,7 @@ class VolunteerUserAdapter(
     ROLE_ATTRIBUTE to listOf(user.role),
     LOCALE to listOf(user.locale),
     FORCE_RESET_PASSWORD to listOf(user.forceResetPassword.toString()),
+    TWO_FACTORY_ENABLED to listOf(user.twoFactorEnabled.toString()),
   )
 
   override fun getUsername(): String = user.email

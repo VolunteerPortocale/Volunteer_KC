@@ -14,8 +14,6 @@ import org.keycloak.provider.ProviderConfigProperty
 private const val PROVIDER_ID = "reset-credentials-form"
 
 class ResetCredentialsAuthenticatorFactory : AuthenticatorFactory {
-  private val clients =
-    ConcurrentHashMap<String, BackendRepository>()
 
   override fun create(session: KeycloakSession?): Authenticator {
     return ResetCredentialsAuthenticator(BackendRepository.getInstance())

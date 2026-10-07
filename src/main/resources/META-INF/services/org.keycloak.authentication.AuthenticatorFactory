@@ -1,3 +1,4 @@
 com.portocale.volunteer.kc.authenticator.LoginFormAuthenticatorFactory
 com.portocale.volunteer.kc.authenticator.ResetCredentialsAuthenticatorFactory
 com.portocale.volunteer.kc.authenticator.ForgotPasswordAuthenticatorFactory
+com.portocale.volunteer.kc.authenticator.TwoFactoryAuthenticatorFactory
