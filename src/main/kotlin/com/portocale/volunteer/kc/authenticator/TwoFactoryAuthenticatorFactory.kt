@@ -11,12 +11,12 @@ import org.keycloak.models.KeycloakSessionFactory
 import org.keycloak.models.credential.PasswordCredentialModel
 import org.keycloak.provider.ProviderConfigProperty
 
-private const val PROVIDER_ID = "forgot-password-form"
+private const val PROVIDER_ID = "two-factory-form"
 
-class ForgotPasswordAuthenticatorFactory : AuthenticatorFactory {
+class TwoFactoryAuthenticatorFactory : AuthenticatorFactory {
 
   override fun create(session: KeycloakSession?): Authenticator {
-    return ForgotPasswordAuthenticator(BackendRepository.getInstance())
+    return TwoFactoryAuthenticator(BackendRepository.getInstance())
   }
 
   override fun init(config: Config.Scope?) {
@@ -33,7 +33,7 @@ class ForgotPasswordAuthenticatorFactory : AuthenticatorFactory {
   }
 
   override fun getDisplayType(): String {
-    return "VolunteerForgotPasswordAuthenticator"
+    return "VolunteerTwoFactoryAuthenticator"
   }
 
   override fun getReferenceCategory(): String {
@@ -53,7 +53,7 @@ class ForgotPasswordAuthenticatorFactory : AuthenticatorFactory {
   }
 
   override fun getHelpText(): String {
-    return "Forgot password form for the Volunteer FE"
+    return "Two factory form for the Volunteer FE"
   }
 
   override fun getConfigProperties(): List<ProviderConfigProperty> {

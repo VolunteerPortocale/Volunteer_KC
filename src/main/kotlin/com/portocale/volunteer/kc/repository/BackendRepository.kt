@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.portocale.volunteer.kc.LoginRequest
 import com.portocale.volunteer.kc.ResetPasswordRequest
 import com.portocale.volunteer.kc.UpdatePasswordRequest
+import com.portocale.volunteer.kc.ValidateOtpRequest
 import com.portocale.volunteer.kc.VolunteerUser
 import java.util.concurrent.TimeUnit
 import okhttp3.Credentials
@@ -13,6 +14,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.HttpHeaders
 import org.jboss.logging.Logger
@@ -102,6 +104,45 @@ class BackendRepository(
     val request =
       Request.Builder()
         .url("$baseUrl/api/v1/users/password/reset")
+        .post(
+          body.toRequestBody(JSON),
+        )
+        .build()
+
+    return executeOkCheckingRequest(request)
+  }
+
+  fun triggerOtp(userId: String): Boolean {
+    val url =
+      "$baseUrl/api/v1/two-factor"
+        .toHttpUrl()
+        .newBuilder()
+        .addPathSegment(userId)
+        .build()
+
+    val request =
+      Request.Builder()
+        .url(url)
+        .post(RequestBody.EMPTY)
+        .build()
+
+    return executeOkCheckingRequest(request)
+  }
+
+  fun validateOtp(userId: String, input: ValidateOtpRequest): Boolean {
+    val url =
+      "$baseUrl/api/v1/two-factor/${userId}/confirm"
+        .toHttpUrl()
+        .newBuilder()
+        .build()
+
+    val body =
+      MAPPER.writeValueAsString(
+        input,
+      )
+    val request =
+      Request.Builder()
+        .url(url)
         .post(
           body.toRequestBody(JSON),
         )

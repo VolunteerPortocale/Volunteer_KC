@@ -366,6 +366,10 @@ body {
     margin-top: 1rem;
 }
 
+.vol-mb-16 {
+    margin-bottom: 1rem;
+}
+
 .vol-field-errors {
     display: flex;
     flex-direction: column;

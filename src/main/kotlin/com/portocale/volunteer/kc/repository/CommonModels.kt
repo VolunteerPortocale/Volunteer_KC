@@ -6,7 +6,8 @@ class CommonModels {
       USERNAME("username"),
       OLD_PASSWORD("oldPassword"),
       NEW_PASSWORD("newPassword"),
-      CONFIRM_PASSWORD("confirmPassword")
+      CONFIRM_PASSWORD("confirmPassword"),
+      OTP_CODE("otp")
     }
   }
 }
