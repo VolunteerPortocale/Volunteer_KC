@@ -76,6 +76,7 @@ class VolunteerUserAdapter(
     const val ROLE_ATTRIBUTE = "role"
     const val FORCE_RESET_PASSWORD = "forceResetPassword"
     const val TWO_FACTORY_ENABLED = "twoFactorEnabled"
+    const val EXTERNAL_ID = "externalId"
   }
 
   init {
@@ -91,6 +92,7 @@ class VolunteerUserAdapter(
     LOCALE to listOf(user.locale),
     FORCE_RESET_PASSWORD to listOf(user.forceResetPassword.toString()),
     TWO_FACTORY_ENABLED to listOf(user.twoFactorEnabled.toString()),
+    EXTERNAL_ID to listOf(StorageId(user.id).externalId)
   )
 
   override fun getUsername(): String = user.email
