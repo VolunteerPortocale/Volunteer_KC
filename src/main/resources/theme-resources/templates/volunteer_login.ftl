@@ -1,5 +1,5 @@
 <#import "template.ftl" as layout>
-<@layout.registrationLayout displayMessage="<#if messagesPerField.existsError('username','password')??>false<#else>true</#if>" displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
+<@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <form novalidate="novalidate" id="vol-form-login" class="vol-login-wrapper"
           onsubmit="login.disabled = true; return true;" action="${url.loginAction}" method="post">
         <h4 class="vol-subtitle">${msg("volLogin")}</h4>
